@@ -21,7 +21,7 @@ class Controller(threading.Thread):
     def waitForInput(self):
         print("Press 'e' to exit")
         print("Press 'a' to increase the frequecy")
-        print("Press 'z' to decrese the frequecy")
+        print("Press 'z' to decrease the frequecy")
 
         keypressed = input("Pressed key is: ")
         print(keypressed)
