@@ -1,6 +1,6 @@
 import threading
 import time
-from parameters import Params
+from parameters import Params, signalType
 
 class Controller(threading.Thread):
 
@@ -22,6 +22,7 @@ class Controller(threading.Thread):
         print("Press 'e' to exit")
         print("Press 'a' to increase the frequecy")
         print("Press 'z' to decrease the frequecy")
+        print("Press 't' to togle sine and noise")
 
         keypressed = input("Pressed key is: ")
         print(keypressed)
@@ -38,3 +39,11 @@ class Controller(threading.Thread):
             with self.lock:
                 self.params.f -= 10
             print("Current frequency is "+ str(self.params.f))
+
+        elif keypressed == "t":
+            with self.lock:
+                if self.params.signal == signalType.pink_noise:
+                    self.params.signal = signalType.sine
+
+                elif self.params.signal == signalType.sine:
+                    self.params.signal = signalType.pink_noise
