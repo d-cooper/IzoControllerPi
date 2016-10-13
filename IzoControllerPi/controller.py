@@ -21,7 +21,7 @@ class Controller(threading.Thread):
         print("Starting " + self.name)  
         
         while self.params.play:
-            self.waitForPilotInput
+            self.waitForPilotInput()
                  
         #while self.params.play:
         #    self.waitForKeyInput()
@@ -57,26 +57,28 @@ class Controller(threading.Thread):
         ch17 = GPIO.input(17)
         ch18 = GPIO.input(18)
 
-        if ch14:
-            self.stopPlayback
-        if ch15:
-            self.volUp
-        if ch17:
-            self.volDown  
-        if ch18:
-            self.toglePause
+        if ch14==1:
+            self.stopPlayback()
+        if ch15==1:
+            self.volUp()
+        if ch17==1:
+            self.volDown()  
+        if ch18==1:
+            self.toglePause()
 
         time.sleep(0.1)
            
     def toglePause(self):
         with self.lock:
             if self.params.pause == 0:
-                self.params.pause == 1
+                self.params.pause = 1
                 print("Playback resumed")
+                time.sleep(1)
                 
             elif self.params.pause == 1:
-                self.params.pause == 0
+                self.params.pause = 0
                 print("Playback paused")
+                time.sleep(1)
         
 
     def volUp(self):
@@ -101,4 +103,4 @@ class Controller(threading.Thread):
 
             elif self.params.signal == signalType.sine:
                 self.params.signal = signalType.pink_noise
-        
+
