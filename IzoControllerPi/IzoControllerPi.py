@@ -7,7 +7,7 @@ import controller
 threadLock = threading.Lock()
 threads = []
 
-Parameters = parameters.Params(0.5,44100,2,440)
+Parameters = parameters.Params(0.5,44100,1,440)
 generatorThread = generator.Generator(Parameters,threadLock)
 controllerThread = controller.Controller(Parameters,threadLock)
 

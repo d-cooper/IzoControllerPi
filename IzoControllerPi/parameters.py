@@ -7,8 +7,9 @@ class signalType(Enum):
 class Params(object):
     volume = 0.5
     fs = 44100
-    duration = 0.1
+    frames = 512
     f=440
+    pause = 0       #1 - play sound, 0 - pause
     play = True
     signal = signalType.pink_noise
 

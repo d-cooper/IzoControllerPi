@@ -1,5 +1,7 @@
 import threading
 import time
+import RPi.GPIO as GPIO
+
 from parameters import Params, signalType
 
 class Controller(threading.Thread):
@@ -9,41 +11,94 @@ class Controller(threading.Thread):
         self.name = "controller"
         self.lock = lock
         self.params = params
+
+        GPIO.setmode(GPIO.BCM)
+        chan_list = [14,15,17,18]
+        GPIO.setup(chan_list, GPIO.IN)
         return
 
     def run(self):
-        print("Starting " + self.name)   
+        print("Starting " + self.name)  
+        
         while self.params.play:
-            self.waitForInput()
+            self.waitForPilotInput
+                 
+        #while self.params.play:
+        #    self.waitForKeyInput()
+
         print("Exiting " + self.name)
         return
 
-    def waitForInput(self):
+    def waitForKeyInput(self):
         print("Press 'e' to exit")
-        print("Press 'a' to increase the frequecy")
-        print("Press 'z' to decrease the frequecy")
+        print("Press 'a' to increase the volume")
+        print("Press 'z' to decrease the volume")
+        print("Press 'p' to pause")
         print("Press 't' to togle sine and noise")
-
         keypressed = input("Pressed key is: ")
-        print(keypressed)
         if keypressed == "e":
-            with self.lock:
-                self.params.play = False
+            self.stopPlayback
 
         elif keypressed == "a":
-            with self.lock:
-                self.params.f += 10
-            print("Current frequency is "+ str(self.params.f))
+            self.volUp
 
         elif keypressed == "z":
-            with self.lock:
-                self.params.f -= 10
-            print("Current frequency is "+ str(self.params.f))
+            self.volDown
 
         elif keypressed == "t":
-            with self.lock:
-                if self.params.signal == signalType.pink_noise:
-                    self.params.signal = signalType.sine
+            self.toogleSignal
+        
+        elif keypressed == "p":
+            self.toglePause
 
-                elif self.params.signal == signalType.sine:
-                    self.params.signal = signalType.pink_noise
+    def waitForPilotInput(self):     
+        ch14 = GPIO.input(14)
+        ch15 = GPIO.input(15)
+        ch17 = GPIO.input(17)
+        ch18 = GPIO.input(18)
+
+        if ch14:
+            self.stopPlayback
+        if ch15:
+            self.volUp
+        if ch17:
+            self.volDown  
+        if ch18:
+            self.toglePause
+
+        time.sleep(0.1)
+           
+    def toglePause(self):
+        with self.lock:
+            if self.params.pause == 0:
+                self.params.pause == 1
+                print("Playback resumed")
+                
+            elif self.params.pause == 1:
+                self.params.pause == 0
+                print("Playback paused")
+        
+
+    def volUp(self):
+        with self.lock:
+            self.params.volume += 0.05
+        print("Current volume is "+ str(self.params.volume))
+
+    def volDown(self):
+        with self.lock:
+            self.params.volume -= 0.05
+        print("Current volume is "+ str(self.params.volume))
+
+    def stopPlayback(self):
+        with self.lock:
+            self.params.play = False
+        print("Playback stoped. Exiting")
+
+    def toogleSignal(self):
+        with self.lock:
+            if self.params.signal == signalType.pink_noise:
+                self.params.signal = signalType.sine
+
+            elif self.params.signal == signalType.sine:
+                self.params.signal = signalType.pink_noise
+        
