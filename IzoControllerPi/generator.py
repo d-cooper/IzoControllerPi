@@ -3,40 +3,57 @@ import threading
 import numpy as np
 import wave
 import struct
+import os
 from parameters import Params, signalType
+
+noisePath = '/home/pi/Desktop/IzoControllerPi/IzoControllerPi/szumrozowy.wav'
+internalPlayer = False
 
 class Generator(threading.Thread):
 
     def __init__(self, params, lock):
         threading.Thread.__init__(self)
-        self.p = pyaudio.PyAudio()
         self.name = "player"
-        self.lock = lock
-        self.params = params       
+        self.params = params
+
+        if internalPlayer:
+            initInternalPlayer()
         
+        return
+
+    def initInternalPlayer(self):
+        self.p = pyaudio.PyAudio()     
+        self.lock = lock
+                
         with self.lock:
             self.fs=getattr(self.params,"fs");
             self.frames = self.params.frames
 
-        self.noise = wav_to_npFloat('szumrozowy.wav', self.frames)
+        self.noise = wav_to_npFloat(noisePath, self.frames)
 
-        # for paFloat32 sample values must be in range [-1.0, 1.0]
+        #for paFloat32 sample values must be in range [-1.0, 1.0]
         self.stream = self.p.open(format=pyaudio.paFloat32,
                         channels=2,
                         rate=self.params.fs,
                         output=True,
                         frames_per_buffer=self.frames)
         return
-
+        
+    
     def run(self):
         print("Starting " + self.name)
-        while self.params.play:
-            self.play()
-
+        
+        if internalPlayer:
+            while self.params.play:
+                self.playInternal()
+        else:
+            while self.params.play:
+                #os.system('amixer sset PCM 90%')
+                os.system('aplay -d 60 ' + noisePath)    
         print("Exiting " + self.name)
         return
 
-    def play(self):
+    def playInternal(self):
         with self.lock:
             f = getattr(self.params,"f")
             volume = getattr(self.params,"volume")
@@ -49,12 +66,13 @@ class Generator(threading.Thread):
             self.stream.write(pause*volume*samples)
 
         elif self.params.signal == signalType.pink_noise:
-            self.stream.write(pause*volume*self.noise)
+            self.stream.write((1-pause)*volume*self.noise)
 
     def stop(self):
-        self.stream.stop_stream()
-        self.stream.close()
-        self.p.terminate()
+        if internalPlayer:
+            self.stream.stop_stream()
+            self.stream.close()
+            self.p.terminate()
         return
 
 def wav_to_npFloat(wave_file, frames):

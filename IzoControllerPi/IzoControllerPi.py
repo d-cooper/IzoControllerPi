@@ -3,11 +3,12 @@ import threading
 import generator
 import parameters
 import controller
-
+import os
 threadLock = threading.Lock()
 threads = []
-
-Parameters = parameters.Params(0.5,44100,1,440)
+os.system('amixer sset PCM 90%')
+os.system('amixer sset PCM unmute')
+Parameters = parameters.Params(0.9,44100,1,440)
 generatorThread = generator.Generator(Parameters,threadLock)
 controllerThread = controller.Controller(Parameters,threadLock)
 

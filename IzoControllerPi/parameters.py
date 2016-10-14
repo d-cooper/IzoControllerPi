@@ -9,7 +9,7 @@ class Params(object):
     fs = 44100
     frames = 512
     f=440
-    pause = 0       #1 - play sound, 0 - pause
+    pause = 0       #1 - pause, 0 - play
     play = True
     signal = signalType.pink_noise
 
