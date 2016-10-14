@@ -4,6 +4,7 @@ import numpy as np
 import wave
 import struct
 import os
+import time
 from parameters import Params, signalType
 
 noisePath = '/home/pi/Desktop/IzoControllerPi/IzoControllerPi/szumrozowy.wav'
@@ -17,11 +18,11 @@ class Generator(threading.Thread):
         self.params = params
 
         if internalPlayer:
-            initInternalPlayer()
+            self.initInternalPlayer(lock)
         
         return
 
-    def initInternalPlayer(self):
+    def initInternalPlayer(self,lock):
         self.p = pyaudio.PyAudio()     
         self.lock = lock
                 
@@ -59,14 +60,16 @@ class Generator(threading.Thread):
             volume = getattr(self.params,"volume")
             pause = getattr(self.params,"pause")
 
-        if self.params.signal == signalType.sine:
-            # generate samples, note conversion to float32 array
-            samples = (np.sin(2*np.pi*np.arange(self.frames)*f/self.fs)).astype(np.float32)
-            # play. May repeat with different volume values (if done interactively) 
-            self.stream.write(pause*volume*samples)
-
-        elif self.params.signal == signalType.pink_noise:
-            self.stream.write((1-pause)*volume*self.noise)
+        if pause == 1:
+            time.sleep(0.1)     
+        else:
+            if self.params.signal == signalType.sine:
+                # generate samples, note conversion to float32 array
+                samples = (np.sin(2*np.pi*np.arange(2*self.frames)*f/self.fs)).astype(np.float32)
+                # play. May repeat with different volume values (if done interactively) 
+                self.stream.write(volume*samples)
+            elif self.params.signal == signalType.pink_noise:
+                self.stream.write(volume*self.noise)
 
     def stop(self):
         if internalPlayer:

@@ -78,23 +78,22 @@ class Controller(threading.Thread):
                 
             elif self.params.pause == 1:
                 self.params.pause = 0
-                self.params.volume
                 os.system('amixer sset PCM toggle')
                 print("Playback resumed")
                 time.sleep(1)
         
 
     def volUp(self):
-        with self.lock:
-            os.system('amixer sset PCM 3dB+')
-            self.params.volume += 0.05
-        print("Current volume is "+ str(self.params.volume))
+        os.system('amixer sset PCM 3dB+')
+        #with self.lock:          
+            #self.params.volume += 0.05
+        #print("Current volume is "+ str(self.params.volume))
 
     def volDown(self):
-        with self.lock:
-            os.system('amixer sset PCM 3dB-')
-            self.params.volume -= 0.05
-        print("Current volume is "+ str(self.params.volume))
+        os.system('amixer sset PCM 3dB-')
+        #with self.lock:
+            #self.params.volume -= 0.05
+        #print("Current volume is "+ str(self.params.volume))
 
     def stopPlayback(self):
         with self.lock:

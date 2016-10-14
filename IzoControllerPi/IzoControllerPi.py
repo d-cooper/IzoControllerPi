@@ -8,7 +8,7 @@ threadLock = threading.Lock()
 threads = []
 os.system('amixer sset PCM 90%')
 os.system('amixer sset PCM unmute')
-Parameters = parameters.Params(0.9,44100,1,440)
+Parameters = parameters.Params(0.9,44100,10*8810,440)
 generatorThread = generator.Generator(Parameters,threadLock)
 controllerThread = controller.Controller(Parameters,threadLock)
 
