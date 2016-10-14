@@ -57,14 +57,15 @@ class Controller(threading.Thread):
         ch17 = GPIO.input(17)
         ch18 = GPIO.input(18)
 
-        if (ch18==1 & ch14==1):
+        if (ch18==1 and ch14==1):
             self.stopPlayback()
+        if (ch14==1 and ch18==0):
+            self.toglePause()
         if ch17==1:
             self.volUp()
         if ch15==1:
             self.volDown()  
-        if ch14==1:
-            self.toglePause()
+
 
         time.sleep(0.1)
            
