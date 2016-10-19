@@ -4,6 +4,9 @@ import RPi.GPIO as GPIO
 import os
 from parameters import Params, signalType
 
+cardName = "'HPOUT2 Digital'"   # Use for Cirrus Audio Card
+#cardName = 'PCM'               # Use for internal audio    
+
 class Controller(threading.Thread):
 
     def __init__(self, params, lock):
@@ -12,9 +15,14 @@ class Controller(threading.Thread):
         self.lock = lock
         self.params = params
 
+        os.system('amixer sset '+ cardName +' 50%')
+        os.system('amixer sset '+ cardName +' unmute')
+
         GPIO.setmode(GPIO.BCM)
-        chan_list = [14,15,17,18]
-        GPIO.setup(chan_list, GPIO.IN)
+        #self.chan_list = [5,6,12,26]
+        self.chan_list = [26,12,6,5]
+        #chan_list = [14,15,17,18]
+        GPIO.setup(self.chan_list, GPIO.IN)
         return
 
     def run(self):
@@ -52,18 +60,18 @@ class Controller(threading.Thread):
             self.toglePause
 
     def waitForPilotInput(self):     
-        ch14 = GPIO.input(14)
-        ch15 = GPIO.input(15)
-        ch17 = GPIO.input(17)
-        ch18 = GPIO.input(18)
+        ch0 = GPIO.input(self.chan_list[0])
+        ch1 = GPIO.input(self.chan_list[1])
+        ch2 = GPIO.input(self.chan_list[2])
+        ch3 = GPIO.input(self.chan_list[3])
 
-        if (ch18==1 and ch14==1):
+        if (ch3==1 and ch0==1):
             self.stopPlayback()
-        if (ch14==1 and ch18==0):
+        if (ch0==1 and ch3==0):
             self.toglePause()
-        if ch17==1:
+        if ch2==1:
             self.volUp()
-        if ch15==1:
+        if ch1==1:
             self.volDown()  
 
 
@@ -73,25 +81,25 @@ class Controller(threading.Thread):
         with self.lock:
             if self.params.pause == 0:
                 self.params.pause = 1
-                os.system('amixer sset PCM toggle')
+                os.system('amixer sset '+ cardName +' toggle')
                 print("Playback paused")
                 time.sleep(1)
                 
             elif self.params.pause == 1:
                 self.params.pause = 0
-                os.system('amixer sset PCM toggle')
+                os.system('amixer sset '+ cardName +' toggle')
                 print("Playback resumed")
                 time.sleep(1)
         
 
     def volUp(self):
-        os.system('amixer sset PCM 3dB+')
-        #with self.lock:          
+        os.system('amixer sset '+ cardName +' 3dB+')
+        #with self.lock:   
             #self.params.volume += 0.05
         #print("Current volume is "+ str(self.params.volume))
 
     def volDown(self):
-        os.system('amixer sset PCM 3dB-')
+        os.system('amixer sset '+ cardName +' 3dB-')
         #with self.lock:
             #self.params.volume -= 0.05
         #print("Current volume is "+ str(self.params.volume))
