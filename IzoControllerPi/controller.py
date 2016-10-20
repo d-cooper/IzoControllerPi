@@ -5,15 +5,65 @@ import os
 from parameters import Params, signalType
 
 cardName = "'HPOUT2 Digital'"   # Use for Cirrus Audio Card
-#cardName = 'PCM'               # Use for internal audio    
+#cardName = 'PCM'               # Use for internal audio
+
+params = None
+lock = None
+
+def initialize(_params,_lock):
+    global params
+    global lock
+    params=_params
+    lock=_lock
+              
+def togglePause():
+    with lock:
+        if params.pause == 0:
+            params.pause = 1
+            os.system('amixer sset '+ cardName +' toggle')
+            print("Playback paused")
+            time.sleep(1)
+                
+        elif params.pause == 1:
+            params.pause = 0
+            os.system('amixer sset '+ cardName +' toggle')
+            print("Playback resumed")
+            time.sleep(1)
+        
+
+def volUp():
+    os.system('amixer sset '+ cardName +' 3dB+')
+    with lock:   
+        params.volume += 0.05
+    print("Current volume is "+ str(params.volume))
+
+def volDown():
+    os.system('amixer sset '+ cardName +' 3dB-')
+    with lock:
+        params.volume -= 0.05
+    print("Current volume is "+ str(params.volume))
+
+def stopPlayback():
+    #os.system('amixer sset PCM 0%%')
+    params.play = False
+    print("Playback stoped. Exiting")
+
+def toogleSignal():
+    with lock:
+        if params.signal == signalType.pink_noise:
+            params.signal = signalType.sine
+
+        elif params.signal == signalType.sine:
+            params.signal = signalType.pink_noise
+
+
+################ Keyboard and remote controller ##############################
 
 class Controller(threading.Thread):
 
     def __init__(self, params, lock):
         threading.Thread.__init__(self)
         self.name = "controller"
-        self.lock = lock
-        self.params = params
 
         os.system('amixer sset '+ cardName +' 50%')
         os.system('amixer sset '+ cardName +' unmute')
@@ -28,10 +78,10 @@ class Controller(threading.Thread):
     def run(self):
         print("Starting " + self.name)  
         
-        while self.params.play:
+        while params.play:
             self.waitForPilotInput()
                  
-        #while self.params.play:
+        #while params.play:
         #    self.waitForKeyInput()
 
         print("Exiting " + self.name)
@@ -45,19 +95,19 @@ class Controller(threading.Thread):
         print("Press 't' to togle sine and noise")
         keypressed = input("Pressed key is: ")
         if keypressed == "e":
-            self.stopPlayback
+            stopPlayback()
 
         elif keypressed == "a":
-            self.volUp
+            volUp()
 
         elif keypressed == "z":
-            self.volDown
+            volDown()
 
         elif keypressed == "t":
-            self.toogleSignal
+            toogleSignal
         
         elif keypressed == "p":
-            self.toglePause
+            togglePause()
 
     def waitForPilotInput(self):     
         ch0 = GPIO.input(self.chan_list[0])
@@ -66,55 +116,13 @@ class Controller(threading.Thread):
         ch3 = GPIO.input(self.chan_list[3])
 
         if (ch3==1 and ch0==1):
-            self.stopPlayback()
+            stopPlayback()
         if (ch0==1 and ch3==0):
-            self.toglePause()
+            togglePause()
         if ch2==1:
-            self.volUp()
+            volUp()
         if ch1==1:
-            self.volDown()  
+            volDown()  
 
 
         time.sleep(0.1)
-           
-    def toglePause(self):
-        with self.lock:
-            if self.params.pause == 0:
-                self.params.pause = 1
-                os.system('amixer sset '+ cardName +' toggle')
-                print("Playback paused")
-                time.sleep(1)
-                
-            elif self.params.pause == 1:
-                self.params.pause = 0
-                os.system('amixer sset '+ cardName +' toggle')
-                print("Playback resumed")
-                time.sleep(1)
-        
-
-    def volUp(self):
-        os.system('amixer sset '+ cardName +' 3dB+')
-        #with self.lock:   
-            #self.params.volume += 0.05
-        #print("Current volume is "+ str(self.params.volume))
-
-    def volDown(self):
-        os.system('amixer sset '+ cardName +' 3dB-')
-        #with self.lock:
-            #self.params.volume -= 0.05
-        #print("Current volume is "+ str(self.params.volume))
-
-    def stopPlayback(self):
-        with self.lock:
-            #os.system('amixer sset PCM 0%%')
-            self.params.play = False
-        print("Playback stoped. Exiting")
-
-    def toogleSignal(self):
-        with self.lock:
-            if self.params.signal == signalType.pink_noise:
-                self.params.signal = signalType.sine
-
-            elif self.params.signal == signalType.sine:
-                self.params.signal = signalType.pink_noise
-

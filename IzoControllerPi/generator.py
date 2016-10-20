@@ -50,7 +50,8 @@ class Generator(threading.Thread):
         else:
             while self.params.play:
                 #os.system('amixer sset PCM 90%')
-                os.system('aplay -d 60 ' + noisePath)    
+                os.system('aplay -d 10 ' + noisePath)
+                #print('playback restarted')
         print("Exiting " + self.name)
         return
 
