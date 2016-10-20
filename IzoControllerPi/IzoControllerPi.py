@@ -14,11 +14,10 @@ controller.initialize(Parameters,threadLock)
 webGui.initialize(Parameters)
 generatorThread = generator.Generator(Parameters,threadLock)
 controllerThread = controller.Controller(Parameters,threadLock)
-webGuiThread = webGui.webGui()
 
 generatorThread.start()
 controllerThread.start()
-webGuiThread.start()
+webGui.run()
 
 # Add threads to thread list
 threads.append(generatorThread)
@@ -30,8 +29,7 @@ for t in threads:
 
 generatorThread.stop()
 print('Generator and controller stoped')
-webGuiThread.stop()
-webGuiThread.join()
+webGui.shutdown_server()
 print('Server stoped')
 
 print("Exiting Main Thread")
