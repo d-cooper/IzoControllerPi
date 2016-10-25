@@ -57,14 +57,16 @@ def run():
     print('Server started')
     return
 
-@app.route("/shutdown")
 def shutdown_server():
-    controller.stopPlayback()
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running the Werkzeug Server')
     func()
-
- 
+    
+@app.route('/shutdown')
+def shutdown():
+    controller.stopPlayback()
+    shutdown_server()
+    return 'Server shut down'
 
     

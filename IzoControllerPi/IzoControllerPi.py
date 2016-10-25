@@ -8,7 +8,7 @@ import os
 threadLock = threading.Lock()
 threads = []
 
-Parameters = parameters.Params(0.9,44100,10*8810,440)
+Parameters = parameters.Params(0.9,44100,10*4410,500)
 
 controller.initialize(Parameters,threadLock)
 webGui.initialize(Parameters)

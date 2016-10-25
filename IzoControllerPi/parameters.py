@@ -11,7 +11,7 @@ class Params(object):
     f=440
     pause = 0       #1 - pause, 0 - play
     play = True
-    signal = signalType.sine
+    signal = signalType.pink_noise
 
     # The class "constructor" - It's actually an initializer 
     def __init__(self, volume, fs, frames, f):
