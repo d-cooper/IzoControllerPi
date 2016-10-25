@@ -33,15 +33,15 @@ def togglePause():
 
 def volUp():
     os.system('amixer sset '+ cardName +' 3dB+')
-    with lock:   
-        params.volume += 0.05
-    print("Current volume is "+ str(params.volume))
+    #with lock:   
+    #    params.volume += 0.05
+    #print("Current volume is "+ str(params.volume))
 
 def volDown():
     os.system('amixer sset '+ cardName +' 3dB-')
-    with lock:
-        params.volume -= 0.05
-    print("Current volume is "+ str(params.volume))
+    #with lock:
+    #    params.volume -= 0.05
+    #print("Current volume is "+ str(params.volume))
 
 def stopPlayback():
     #os.system('amixer sset PCM 0%%')
