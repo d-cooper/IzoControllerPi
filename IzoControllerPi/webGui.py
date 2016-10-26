@@ -3,8 +3,7 @@ import threading
 
 from flask import Flask, render_template, request
 
-app = Flask(__name__, static_url_path='/home/pi/Desktop/IzoControllerPi/IzoControllerPi/static')
-#app._static_folder = "/home/pi/Desktop/IzoControllerPi/IzoControllerPi/templates"
+app = Flask(__name__);
 
 params = None
 
