@@ -45,8 +45,11 @@ def volDown():
 
 def stopPlayback():
     #os.system('amixer sset PCM 0%%')
+    toogleSignal()
     params.play = False
     print("Playback stoped. Exiting")
+    time.sleep(15)
+    os.system('shutdown -h now')
 
 def toogleSignal():
     with lock:

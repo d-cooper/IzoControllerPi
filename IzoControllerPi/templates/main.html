@@ -10,13 +10,36 @@
 </head>
 
 <body>
-   <h1>RPi Web Server</h1>
-   <h2>IzoController App </h2>
-   <div class="col-md-2">
-      <a href="/play" class="btn btn-block btn-lg btn-success" role="button">play/pause</a>
-      <a href="/volup" class="btn btn-block btn-lg btn-primary" role="button">Volume up</a>
-      <a href="/voldown" class="btn btn-block btn-lg btn-primary" role="button">Volume down</a>
-      <a href="/shutdown" class="btn btn-block btn-lg btn-danger" role="button">Shutdown</a>
-   </div>
+<div class="container">
+  <h2>IzoController App </h2>
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#home">Controller</a></li>
+    <li><a data-toggle="tab" href="#menu1">Log</a></li>
+    <li><a data-toggle="tab" href="#menu2">Settings</a></li>
+  </ul>
+ 
+  <div class="tab-content">
+    <div id="home" class="tab-pane fade in active">
+      <h2>Controller</h2>   
+      <div class="col-md-2">
+         <a href="/play" class="btn btn-block btn-lg btn-success" role="button">play/pause</a>
+         <a href="/volup" class="btn btn-block btn-lg btn-primary" role="button">Volume up</a>
+         <a href="/voldown" class="btn btn-block btn-lg btn-primary" role="button">Volume down</a>
+         <a href="/shutdown" class="btn btn-block btn-lg btn-danger" role="button">Shutdown</a>
+      </div>      
+    </div>
+
+    <div id="menu1" class="tab-pane fade">
+      <h3>Menu 1</h3>
+      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+
+    <div id="menu2" class="tab-pane fade">
+      <h3>Menu 2</h3>
+      <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
