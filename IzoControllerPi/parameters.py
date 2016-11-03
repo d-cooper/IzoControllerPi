@@ -1,11 +1,17 @@
 from enum import Enum
+import os
+
+cardName = "'HPOUT2 Digital'"   # Use for Cirrus Audio Card
+#cardName = 'PCM'               # Use for internal audio
 
 class signalType(Enum):
     sine = 1
     pink_noise = 2
 
 class Params(object):
-    volume = 0.5
+    #volume = 50
+    volume=os.system('amixer sget '+ cardName)
+    #volume = os.system('amixer sget '+ cardName)
     fs = 44100
     frames = 8820
     f=440

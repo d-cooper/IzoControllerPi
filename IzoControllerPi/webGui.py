@@ -1,6 +1,7 @@
 import controller
 import threading
 
+from parameters import Params
 from flask import Flask, render_template, request
 
 app = Flask(__name__);
@@ -12,12 +13,28 @@ def initialize(_params):
     params=_params
 
 @app.route("/")
-def main():   
+def main():
     templateData = {
-      'playback' : params.pause
+      'pause': params.pause,
+      'volume': params.volume,
+      'page': 'main'
       }
     
     return render_template('main.html',**templateData)
+
+@app.route("/showlog")
+def showlog():
+    with open('/home/pi/Desktop/IzoControllerPi/log.txt','r') as myfile:
+        log=myfile.read()
+    templateData = {
+      'pause': params.pause,
+      'volume': params.volume,
+      'log':   log,
+      'page': 'log'
+      }
+    
+    return render_template('main.html',**templateData)
+
 
 @app.route("/play")
 def togglePause():
@@ -25,7 +42,9 @@ def togglePause():
     controller.togglePause()
 
     templateData = {
-      'playback' : params.pause
+      'pause' : params.pause,
+      'volume': params.volume,
+      'page': 'main'
       }
     
     return render_template('main.html',**templateData)
@@ -36,7 +55,9 @@ def volup():
     controller.volUp()
 
     templateData = {
-      'playback' : params.pause
+      'pause' : params.pause,
+      'volume': params.volume,
+      'page': 'main'
       }
     
     return render_template('main.html',**templateData)
@@ -47,7 +68,9 @@ def voldown():
     controller.volDown()
 
     templateData = {
-      'playback' : params.pause
+      'pause' : params.pause,
+      'volume': params.volume,
+      'page': 'main'
       }
     
     return render_template('main.html',**templateData)

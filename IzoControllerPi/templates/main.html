@@ -1,37 +1,42 @@
 <!DOCTYPE html>
 <head>
-   <title>RPi Web Server</title>
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1">
-   <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-   <link rel="stylesheet" href="/static/css/bootstrap-theme.min.css">
-   <script src="/static/jquery-3.1.1.min.js">
-   <script src="/static/js/bootstrap.min.js"</script>  
+  <title>Bootstrap Case</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <script src="/static/jquery/jquery-3.1.1.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
 <div class="container">
   <h2>IzoController App </h2>
   <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#home">Controller</a></li>
-    <li><a data-toggle="tab" href="#menu1">Log</a></li>
+    <li {%if page == 'main' %}class="active" {%endif%}><a data-toggle="tab" href="#home">Controller</a></li>
+    <li {%if page == 'log' %}class="active" {%endif%}><a data-toggle="tab" href="#menu1">Log</a></li>
     <li><a data-toggle="tab" href="#menu2">Settings</a></li>
   </ul>
  
   <div class="tab-content">
-    <div id="home" class="tab-pane fade in active">
+    <div id="home" class="tab-pane fade {%if page == 'main' %}in active{%endif%}">
       <h2>Controller</h2>   
       <div class="col-md-2">
-         <a href="/play" class="btn btn-block btn-lg btn-success" role="button">play/pause</a>
+	{%if pause == 1%}
+         <a href="/play" class="btn btn-block btn-lg btn-success" role="button">Play</a>
+	{%else%}
+	 <a href="/play" class="btn btn-block btn-lg btn-warning" role="button">Pause</a>
+	{%endif%}
          <a href="/volup" class="btn btn-block btn-lg btn-primary" role="button">Volume up</a>
          <a href="/voldown" class="btn btn-block btn-lg btn-primary" role="button">Volume down</a>
+	 <h2>Current volume is {{volume}}%</h2>
          <a href="/shutdown" class="btn btn-block btn-lg btn-danger" role="button">Shutdown</a>
       </div>      
     </div>
 
-    <div id="menu1" class="tab-pane fade">
-      <h3>Menu 1</h3>
-      <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <div id="menu1" class="tab-pane fade {%if page == 'log' %}in active {%endif%}">
+      <h3>Log</h3>
+      <a href="/showlog" class="btn btn-block btn-lg btn-primary" role="button">Reload Log</a>
+      <pre>{{log}}</pre>
     </div>
 
     <div id="menu2" class="tab-pane fade">
